@@ -1,7 +1,7 @@
 ## DEPI_R3_ONL3_ISS3-S1_FINAL_PROJECT
 
 ## Group Code 
-ONL#_ISS3S1
+ONL3_ISS3_S1
 
 ## Track
 Infrastructure and Security - Vulnerability Analyst and Penetration Tester
