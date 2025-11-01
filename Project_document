@@ -3,123 +3,123 @@ Project Overview
 • Project Name: Web &&Network Application Security Vulnerability Assessment.
 • Description: Comprehensive black box penetration test of the Rabbit Store e commerce web app (TryHackMe lab) to identify, validate, and prioritize exploitable security weaknesses that could lead to customer data exposure, account takeover, or transaction tampering.
 • Main Objectives:
-1.	Enumerate the attack surface and discover vulnerabilities across auth, session, input handling, and access control.
-2.	Safely demonstrate proof of exploitation (PoC) without damaging the lab environment.
-3.	Provide actionable remediation steps mapped to OWASP and industry best practices.
-• Scope of Testing: Primary web application (rabbitstore.thm) and any exposed APIs under the same host; in scope paths include /login, /register, /search, /cart, /checkout, /api/*. Network level enumeration is limited to the room assigned host(s). Third party services and DoS are out of scope.
-• Tools and Technologies: Kali Linux, Burp Suite, OWASP ZAP, Nmap, whatweb/httpx, gobuster/ffuf, Nikto, sqlmap, Hydra (rate limited), Wireshark/tcpdump, Python (requests/JWT), Bash utilities.
+  1.	Enumerate the attack surface and discover vulnerabilities across auth, session, input handling, and access control.
+  2.	Safely demonstrate proof of exploitation (PoC) without damaging the lab environment.
+  3.	Provide actionable remediation steps mapped to OWASP and industry best practices.
+    • Scope of Testing: Primary web application (rabbitstore.thm) and any exposed APIs under the same host; in scope paths include /login, /register, /search, /cart, /checkout, /api/*. Network level enumeration is limited to the room assigned host(s). Third party services and DoS are out of scope.
+    • Tools and Technologies: Kali Linux, Burp Suite, OWASP ZAP, Nmap, whatweb/httpx, gobuster/ffuf, Nikto, sqlmap, Hydra (rate limited), Wireshark/tcpdump, Python (requests/JWT), Bash utilities.
 ________________________________________
 2)Testing Methodology
-• Methodology Type: PTES (end to end phases) mapped to OWASP Testing Guide (WSTG) and informed by NIST SP 800 115.
-Applied Flow: Pre engagement → Intelligence Gathering → Threat Modeling → Vulnerability Analysis → Exploitation (limited) → Post Exploitation (minimal) → Reporting & Re test.
+  • Methodology Type: PTES (end to end phases) mapped to OWASP Testing Guide (WSTG) and informed by NIST SP 800 115.
+  Applied Flow: Pre engagement → Intelligence Gathering → Threat Modeling → Vulnerability Analysis → Exploitation (limited) → Post Exploitation (minimal) → Reporting & Re test.
 ________________________________________
-3)Requirements
-a. Functional Requirements
-• Reconnaissance of domains/IPs, technologies, and endpoints.
-• Vulnerability scanning and manual verification for false positive reduction.
-• Controlled exploitation to confirm risk (within Rules of Engagement).
-• Produce a report with severity ratings (CVSS v3.1), evidence, and remediation guidance.
-b. Non Functional Requirements
-• Safety: No disruptive payloads, no data exfiltration beyond PoC.
-• Legal/Ethical: Comply with TryHackMe ToS and local laws.
-• Evidence Hygiene: Timestamped screenshots, request/response logs, hashes for artifacts.
-• Repeatability: Document commands, versions, and configuration for reproducibility.
+3) Requirements
+  a. Functional Requirements
+    • Reconnaissance of domains/IPs, technologies, and endpoints.
+    • Vulnerability scanning and manual verification for false positive reduction.
+    • Controlled exploitation to confirm risk (within Rules of Engagement).
+    • Produce a report with severity ratings (CVSS v3.1), evidence, and remediation guidance.
+  b. Non Functional Requirements
+    • Safety: No disruptive payloads, no data exfiltration beyond PoC.
+    • Legal/Ethical: Comply with TryHackMe ToS and local laws.
+    • Evidence Hygiene: Timestamped screenshots, request/response logs, hashes for artifacts.
+    • Repeatability: Document commands, versions, and configuration for reproducibility.
 ________________________________________
 4)Test Plan and Design
-• Scope Definition:
-•	In Scope assets: rabbitstore.thm, room IP (e.g., 10.10.x.x), app routes listed above.
-•	Out of Scope: Third party services, unrelated hosts, DoS, social engineering, physical attacks.
-• Rules of Engagement:
-•	Time boxed testing within lab window; throttle automated tools.
-•	Stop testing on signs of instability; immediately record suspected Critical/High.
-•	Use only fake/test accounts and synthetic data.
-• Attack Vectors:
-• Web Application: SQL Injection, XSS (reflected/DOM), CSRF, IDOR/insecure direct object references, authentication bypass, weak session management/JWT issues, SSRF/RCE (tech dependent), security misconfiguration, sensitive data exposure, weak headers/TLS.
-• Network: Port/service scanning, version detection, safe NSE scripts for HTTP/TLS enumeration; limited MITM only if explicitly permitted (not used in this lab).
+  • Scope Definition:
+  •	In Scope assets: rabbitstore.thm, room IP (e.g., 10.10.x.x), app routes listed above.
+  •	Out of Scope: Third party services, unrelated hosts, DoS, social engineering, physical attacks.
+  • Rules of Engagement:
+  •	Time boxed testing within lab window; throttle automated tools.
+  •	Stop testing on signs of instability; immediately record suspected Critical/High.
+  •	Use only fake/test accounts and synthetic data.
+  • Attack Vectors:
+  • Web Application: SQL Injection, XSS (reflected/DOM), CSRF, IDOR/insecure direct object references, authentication bypass, weak session management/JWT issues, SSRF/RCE (tech dependent), security misconfiguration, sensitive data exposure, weak headers/TLS.
+  • Network: Port/service scanning, version detection, safe NSE scripts for HTTP/TLS enumeration; limited MITM only if explicitly permitted (not used in this lab).
 ________________________________________
 5)Implementation Details
-• Tool Configuration:
-•	Nmap: -sC -sV -p- -Pn --version-all with selective --script http-* where safe.
-•	Burp Suite: Proxy, Repeater, Intruder (rate limited), Logger/Comparer; match and replace templates for payload trials.
-•	ZAP: Passive scan + targeted active scan on confirmed inputs.
-•	sqlmap: Confirmed injection points only; time based/boolean techniques; DB enumeration restricted to schema banners/limited metadata.
-• Custom Scripts/Modules:
-•	idor_enumerator.py: Iterates /api/orders/{id} with auth token and checks for unauthorized responses.
-•	jwt_linter.py: Validates signing algorithm usage (alg), audience/issuer/expiry claims; detects none/weak secret.
+  • Tool Configuration:
+  •	Nmap: -sC -sV -p- -Pn --version-all with selective --script http-* where safe.
+  •	Burp Suite: Proxy, Repeater, Intruder (rate limited), Logger/Comparer; match and replace templates for payload trials.
+  •	ZAP: Passive scan + targeted active scan on confirmed inputs.
+  •	sqlmap: Confirmed injection points only; time based/boolean techniques; DB enumeration restricted to schema banners/limited metadata.
+  • Custom Scripts/Modules:
+  •	idor_enumerator.py: Iterates /api/orders/{id} with auth token and checks for unauthorized responses.
+  •	jwt_linter.py: Validates signing algorithm usage (alg), audience/issuer/expiry claims; detects none/weak secret.
 ________________________________________
 6)Execution and Findings
-• Testing Phases: Recon → Scanning → Gaining Access → Maintaining Access (N/A for persistence in lab) → Covering Tracks (internal evidence organization only).
-• Tools Used: Nmap, whatweb/httpx, gobuster/ffuf, Nikto, Burp/ZAP, sqlmap, Wireshark, Python/Bash scripts.
-• Key Findings (Illustrative for this room):
-1.	F 001: SQL Injection in /login (Critical, CVSS 9.8) — Time based payloads induced predictable delays; authentication bypass achievable. Impact: account takeover, potential data exposure. Fix: parameterized queries, prepared statements, least privilege DB role.
-2.	F 002: IDOR on /api/orders/{id} (High, CVSS 8.7) — Authenticated user could read other users’ orders by changing numeric id. Fix: enforce server side authorization checks per object (ABAC/RBAC), deny by default.
-3.	F 003: Reflected XSS at /search?q= (Medium, CVSS 6.1) — Unsanitized query echoed in HTML; session token at risk via DOM access if cookie flags weak. Fix: output encoding, strict input validation, CSP.
-4.	F 004: Missing Security Headers (Low, CVSS 3.1) — No CSP/HSTS/X Frame Options; increases exploit surface. Fix: implement modern headers and harden TLS.
-• Evidence Collected: Screenshots (#S 01…#S 20), HTTP requests/responses, PoC payloads, tool logs/hashes; retained locally per evidence policy.
+  • Testing Phases: Recon → Scanning → Gaining Access → Maintaining Access (N/A for persistence in lab) → Covering Tracks (internal evidence organization only).
+  • Tools Used: Nmap, whatweb/httpx, gobuster/ffuf, Nikto, Burp/ZAP, sqlmap, Wireshark, Python/Bash scripts.
+  • Key Findings (Illustrative for this room):
+    1.	F 001: SQL Injection in /login (Critical, CVSS 9.8) — Time based payloads induced predictable delays; authentication bypass achievable. Impact: account takeover, potential data exposure. Fix: parameterized queries, prepared statements, least privilege DB role.
+    2.	F 002: IDOR on /api/orders/{id} (High, CVSS 8.7) — Authenticated user could read other users’ orders by changing numeric id. Fix: enforce server side authorization checks per object (ABAC/RBAC), deny by default.
+    3.	F 003: Reflected XSS at /search?q= (Medium, CVSS 6.1) — Unsanitized query echoed in HTML; session token at risk via DOM access if cookie flags weak. Fix: output encoding, strict input validation, CSP.
+    4.	F 004: Missing Security Headers (Low, CVSS 3.1) — No CSP/HSTS/X Frame Options; increases exploit surface. Fix: implement modern headers and harden TLS.
+  • Evidence Collected: Screenshots (#S 01…#S 20), HTTP requests/responses, PoC payloads, tool logs/hashes; retained locally per evidence policy.
 ________________________________________
 7)Reporting and Delivery
-• Report Format: PDF with Executive Summary, Technical Details per finding (steps to reproduce, impact, evidence, remediation), and Appendix (payloads/commands/versions).
-• Delivery Instructions: Secure file transfer or encrypted email; share decryption password via out of band channel.
-• Remediation Recommendations:
-•	Injection: Use parameterized queries/ORM; centralize validation/encoding; WAF virtual patch as interim.
-•	Access Control: Enforce server side checks on every object/action; implement least privilege and robust ID binding.
-•	Sessions: HttpOnly, Secure, SameSite cookies; rotate on login/privilege change; short TTL; server side invalidation; strong JWT signing and claim validation.
-•	Headers/TLS: CSP (default src 'none' + allowlists), HSTS, X Frame Options DENY, Referrer Policy; modern ciphers.
-•	Secure SDLC: Add pre commit SAST, pipeline DAST on staging, secrets scanning, dependency checks.
+  • Report Format: PDF with Executive Summary, Technical Details per finding (steps to reproduce, impact, evidence, remediation), and Appendix (payloads/commands/versions).
+  • Delivery Instructions: Secure file transfer or encrypted email; share decryption password via out of band channel.
+  • Remediation Recommendations:
+  •	Injection: Use parameterized queries/ORM; centralize validation/encoding; WAF virtual patch as interim.
+  •	Access Control: Enforce server side checks on every object/action; implement least privilege and robust ID binding.
+  •	Sessions: HttpOnly, Secure, SameSite cookies; rotate on login/privilege change; short TTL; server side invalidation; strong JWT signing and claim validation.
+  •	Headers/TLS: CSP (default src 'none' + allowlists), HSTS, X Frame Options DENY, Referrer Policy; modern ciphers.
+  •	Secure SDLC: Add pre commit SAST, pipeline DAST on staging, secrets scanning, dependency checks.
 ________________________________________
 Contributors
-• Team Members (5):
-• Team member 1: Elsayed Ahmed Gomaa — Lead Pentester / Engagement Owner
-• Team member 2: Ibrahim Mohammed Ibrahim — Web App Security Specialist
-• Team member 3: Kirollos Makram Soliman — Network & Infrastructure Tester
-• Team member 4: Ahmed Ehab Younes — Reporting & QA (Report Writer)
-• Team member 5: Mohammed Hamed Gad — Automation & Tooling
-• Team Leader: Elsayed Ahmed Gomaa 
+  • Team Members (5):
+  • Team member 1: Elsayed Ahmed Gomaa — Lead Pentester / Engagement Owner
+  • Team member 2: Ibrahim Mohammed Ibrahim — Web App Security Specialist
+  • Team member 3: Kirollos Makram Soliman — Network & Infrastructure Tester
+  • Team member 4: Ahmed Ehab Younes — Reporting & QA (Report Writer)
+  • Team member 5: Mohammed Hamed Gad — Automation & Tooling
+  • Team Leader: Elsayed Ahmed Gomaa 
 ________________________________________
 References
 Frameworks & Standards
-•	OWASP Web Security Testing Guide (WSTG)
-•	OWASP Top 10 (Web) 2021; OWASP API Security Top 10 (2023)
-•	OWASP ASVS 4.x (Level 2 recommended)
-•	PTES (Penetration Testing Execution Standard) & PTES Technical Guidelines
-•	NIST SP 800 115 (Technical Guide to Security Testing and Assessment)
-•	NIST SP 800 53 Rev.5 (Security & Privacy Controls) — mapping reference
-•	NIST SP 800 30 (Risk Management / Risk Assessment Guide)
-•	NIST SP 800 63B (Digital Identity Guidelines — Authentication)
-•	ISO/IEC 27001 & 27002 (Information Security Management & Controls)
-•	PCI DSS v4.0 (esp. Req. 6, 11 — secure software & testing)
-•	CIS Critical Security Controls v8
-•	MITRE ATT&CK & CAPEC (Tactics/Techniques; Attack Patterns)
+  •	OWASP Web Security Testing Guide (WSTG)
+  •	OWASP Top 10 (Web) 2021; OWASP API Security Top 10 (2023)
+  •	OWASP ASVS 4.x (Level 2 recommended)
+  •	PTES (Penetration Testing Execution Standard) & PTES Technical Guidelines
+  •	NIST SP 800 115 (Technical Guide to Security Testing and Assessment)
+  •	NIST SP 800 53 Rev.5 (Security & Privacy Controls) — mapping reference
+  •	NIST SP 800 30 (Risk Management / Risk Assessment Guide)
+  •	NIST SP 800 63B (Digital Identity Guidelines — Authentication)
+  •	ISO/IEC 27001 & 27002 (Information Security Management & Controls)
+  •	PCI DSS v4.0 (esp. Req. 6, 11 — secure software & testing)
+  •	CIS Critical Security Controls v8
+  •	MITRE ATT&CK & CAPEC (Tactics/Techniques; Attack Patterns)
 Risk, Scoring & Disclosure
-•	FIRST CVSS v3.1 Specification & User Guide
-•	ISO/IEC 29147 (Vulnerability Disclosure) & 30111 (Vulnerability Handling)
+  •	FIRST CVSS v3.1 Specification & User Guide
+  •	ISO/IEC 29147 (Vulnerability Disclosure) & 30111 (Vulnerability Handling)
 Secure Config & Protocols
-•	IETF RFC 7519 (JSON Web Token — JWT)
-•	IETF RFC 6749 & 6750 (OAuth 2.0 Framework & Bearer Token Usage)
-•	IETF BCP 195 / RFC 7525 (Recommendations for Secure Use of TLS)
-•	IETF RFC 6265 (HTTP State Management — Cookies) & SameSite guidance
-•	Content Security Policy (CSP) — W3C / MDN Web Docs
-•	HSTS / Referrer Policy / X Frame Options best practices (MDN Web Docs)
-Databases & Intelligence
-•	CVE / NVD (NIST National Vulnerability Database)
-•	CWE (Common Weakness Enumeration)
-•	Exploit DB & Packet Storm Security
-•	Malware Information Sharing Platforms (where applicable)
+  •	IETF RFC 7519 (JSON Web Token — JWT)
+  •	IETF RFC 6749 & 6750 (OAuth 2.0 Framework & Bearer Token Usage)
+  •	IETF BCP 195 / RFC 7525 (Recommendations for Secure Use of TLS)
+  •	IETF RFC 6265 (HTTP State Management — Cookies) & SameSite guidance
+  •	Content Security Policy (CSP) — W3C / MDN Web Docs
+  •	HSTS / Referrer Policy / X Frame Options best practices (MDN Web Docs)
+  Databases & Intelligence
+  •	CVE / NVD (NIST National Vulnerability Database)
+  •	CWE (Common Weakness Enumeration)
+  •	Exploit DB & Packet Storm Security
+  •	Malware Information Sharing Platforms (where applicable)
 Guides & Checklists
-•	OWASP Testing Cheatsheets (Input Validation, XSS, AuthN/AuthZ, SSRF, etc.)
-•	OWASP Proactive Controls (C2 — C10)
-•	NCSC (UK) Web Security Guidance & Logging/Monitoring Guidance
-Tool Documentation
-•	Nmap & NSE Scripts Reference
-•	Burp Suite (Proxy/Repeater/Intruder/Extender) — Official Docs & BApp Store
-•	OWASP ZAP — User Guide & Add on Marketplace
-•	sqlmap — Wiki/Usage Guide
-•	ffuf / gobuster — Usage & wordlist guidance
-•	Nikto — User Guide
-•	Hydra / Medusa — Auth testing manuals
-•	Wireshark — Display filters & TLS decryption (where lawful)
+  •	OWASP Testing Cheatsheets (Input Validation, XSS, AuthN/AuthZ, SSRF, etc.)
+  •	OWASP Proactive Controls (C2 — C10)
+  •	NCSC (UK) Web Security Guidance & Logging/Monitoring Guidance
+  Tool Documentation
+  •	Nmap & NSE Scripts Reference
+  •	Burp Suite (Proxy/Repeater/Intruder/Extender) — Official Docs & BApp Store
+  •	OWASP ZAP — User Guide & Add on Marketplace
+  •	sqlmap — Wiki/Usage Guide
+  •	ffuf / gobuster — Usage & wordlist guidance
+  •	Nikto — User Guide
+  •	Hydra / Medusa — Auth testing manuals
+  •	Wireshark — Display filters & TLS decryption (where lawful)
 Supplementary
-•	Secure coding standards (SEI CERT for C/C++/Java, etc.)
-•	Dependency & SBOM tooling references (OWASP Dependency Check, CycloneDX, Syft/Grype)
-•	Browser security references (MDN Web Docs for headers, CORS, SRI)
+  •	Secure coding standards (SEI CERT for C/C++/Java, etc.)
+  •	Dependency & SBOM tooling references (OWASP Dependency Check, CycloneDX, Syft/Grype)
+  •	Browser security references (MDN Web Docs for headers, CORS, SRI)
 
